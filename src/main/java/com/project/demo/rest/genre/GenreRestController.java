@@ -21,7 +21,7 @@ public class GenreRestController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
-    public Genre addCategory(@RequestBody Genre genre) {
+    public Genre addGenre(@RequestBody Genre genre) {
         return GenreRepository.save(genre);
     }
 
@@ -37,7 +37,7 @@ public class GenreRestController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
-    public Genre updateCategory(@PathVariable Long id, @RequestBody Genre genre) {
+    public Genre updateGenre(@PathVariable Long id, @RequestBody Genre genre) {
         return GenreRepository.findById(id)
                 .map(existingGenre -> {
                     existingGenre.setName(genre.getName());
