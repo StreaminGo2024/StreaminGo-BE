@@ -2,12 +2,16 @@ package com.project.demo.rest.auth;
 
 import com.project.demo.logic.entity.auth.AuthenticationService;
 import com.project.demo.logic.entity.auth.JwtService;
+import com.project.demo.logic.entity.passwordResetRequests.PasswordResetRequest;
+import com.project.demo.logic.entity.passwordResetRequests.PasswordResetRequestRepository;
 import com.project.demo.logic.entity.rol.Role;
 import com.project.demo.logic.entity.rol.RoleEnum;
 import com.project.demo.logic.entity.rol.RoleRepository;
 import com.project.demo.logic.entity.user.LoginResponse;
 import com.project.demo.logic.entity.user.User;
 import com.project.demo.logic.entity.user.UserRepository;
+import com.project.demo.logic.helper.CodeHelper;
+import com.project.demo.logic.helper.EmailHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RequestMapping("/auth")
@@ -32,14 +37,17 @@ public class AuthRestController {
     @Autowired
     private RoleRepository roleRepository;
 
-
+    @Autowired
+    PasswordResetRequestRepository passwordResetRequestRepository;
 
     private final AuthenticationService authenticationService;
     private final JwtService jwtService;
+    private final EmailHelper emailHelper;
 
-    public AuthRestController(JwtService jwtService, AuthenticationService authenticationService) {
+    public AuthRestController(JwtService jwtService, AuthenticationService authenticationService, EmailHelper emailHelper) {
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
+        this.emailHelper = emailHelper;
     }
 
     @PostMapping("/login")
@@ -70,6 +78,35 @@ public class AuthRestController {
         user.setRole(optionalRole.get());
         User savedUser = userRepository.save(user);
         return ResponseEntity.ok(savedUser);
+    }
+
+    @PostMapping("/passwordResetRequest")
+    public PasswordResetRequest addPasswordResetRequest(@RequestBody User user){
+
+        Optional<User> foundedUser = userRepository.findByEmail(user.getEmail());
+
+        if(foundedUser.isEmpty()){
+            return null;
+        }
+
+        PasswordResetRequest passwordResetRequest = new PasswordResetRequest();
+        passwordResetRequest.setResetCode(CodeHelper.generateResetCode(16));
+        passwordResetRequest.setExpirationDate(LocalDateTime.now().plusMinutes(30));
+
+        foundedUser.get().setPassword("");
+        passwordResetRequest.setUser(foundedUser.get());
+
+        PasswordResetRequest newPasswordResetRequest = passwordResetRequestRepository.save(passwordResetRequest);
+
+        String url = "urlbase.com?code=" + newPasswordResetRequest.getResetCode();
+
+        newPasswordResetRequest.setResetCode(null);
+
+        emailHelper.sendEmail("csalazara@ucenfotec.ac.cr","Cambio de contraseña","Para realizar el cambio de su contraseña ingrese al siguiente link: " + url);
+
+        return newPasswordResetRequest;
+
+
     }
 
 }

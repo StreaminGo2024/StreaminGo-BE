@@ -1,5 +1,6 @@
 package com.project.demo.logic.entity.passwordResetRequests;
 
+import com.project.demo.logic.entity.user.User;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -8,13 +9,16 @@ import java.time.LocalDateTime;
 @Entity
 public class PasswordResetRequest {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Integer id;
     @Column(unique = true, nullable = false)
     private LocalDateTime expirationDate;
     @Column(nullable = false)
     private String resetCode;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(nullable = false, referencedColumnName="id")
+    private User user;
 
     public Integer getId() {
         return id;
@@ -38,5 +42,13 @@ public class PasswordResetRequest {
 
     public void setResetCode(String resetCode) {
         this.resetCode = resetCode;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
