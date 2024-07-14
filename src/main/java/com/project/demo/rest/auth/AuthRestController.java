@@ -15,10 +15,7 @@ import com.project.demo.logic.helper.EmailHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -98,7 +95,7 @@ public class AuthRestController {
 
         PasswordResetRequest newPasswordResetRequest = passwordResetRequestRepository.save(passwordResetRequest);
 
-        String url = "urlbase.com?code=" + newPasswordResetRequest.getResetCode();
+        String url = "http://localhost:4200/resetPassword?code=" + newPasswordResetRequest.getResetCode();
 
         newPasswordResetRequest.setResetCode(null);
 
@@ -107,6 +104,23 @@ public class AuthRestController {
         return newPasswordResetRequest;
 
 
+    }
+
+    @PostMapping("passwordReset/{code}")
+    public User passwordReset(@PathVariable String code, @RequestBody User user) {
+        Optional<PasswordResetRequest> foundRequest = passwordResetRequestRepository.findByResetCode(code);
+
+        if(foundRequest.isEmpty())
+            return null;
+
+        return userRepository.findById(foundRequest.get().getUser().getId())
+                .map(existingUser -> {
+                    existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
+                    User updateUser = userRepository.save(existingUser);
+                    updateUser.setPassword("");
+                    return updateUser;
+                })
+                .orElseGet(() -> null);
     }
 
 }
