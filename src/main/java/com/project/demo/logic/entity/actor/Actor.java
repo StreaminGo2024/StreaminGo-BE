@@ -1,5 +1,6 @@
 package com.project.demo.logic.entity.actor;
 
+import com.project.demo.logic.entity.casting.Casting;
 import jakarta.persistence.*;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -25,6 +26,10 @@ public class Actor {
     @UpdateTimestamp
     @Column(name = "bith_date")
     private Date birth;
+
+    @ManyToOne
+    @JoinColumn(name = "casting_id")
+    private Casting casting;
 
     public Long getId() {
         return id;
@@ -64,5 +69,13 @@ public class Actor {
 
     public void setBirth(Date birth) {
         this.birth = birth;
+    }
+
+    public Casting getCast() {
+        return casting;
+    }
+
+    public void setCast(Casting casting) {
+        this.casting = casting;
     }
 }
