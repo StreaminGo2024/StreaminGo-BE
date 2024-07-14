@@ -95,7 +95,7 @@ public class AuthRestController {
 
         PasswordResetRequest newPasswordResetRequest = passwordResetRequestRepository.save(passwordResetRequest);
 
-        String url = "http://localhost:4200/resetPassword?code=" + newPasswordResetRequest.getResetCode();
+        String url = "http://localhost:4200/resetPassword/" + newPasswordResetRequest.getResetCode();
 
         newPasswordResetRequest.setResetCode(null);
 
