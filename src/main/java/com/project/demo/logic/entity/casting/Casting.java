@@ -17,9 +17,10 @@ public class Casting {
     @Column(nullable = false)
     private String name;
 
+    //muchos a muchos jsonignore
     @OneToMany(mappedBy = "casting", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Actor> actors = new ArrayList<>();
-
+// AGREGAR PELICULA ONE TO ONE
     public Long getId() {
         return id;
     }

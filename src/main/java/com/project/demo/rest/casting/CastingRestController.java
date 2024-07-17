@@ -30,7 +30,7 @@ public class CastingRestController {
     public Casting getCastById(@PathVariable Long id) {
         return CastingRepository.findById(id).orElseThrow(RuntimeException::new);
     }
-
+//AGREGAR AUTOR
     /**@PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     public Cast updateCast(@PathVariable Long id, @RequestBody Cast cast) {

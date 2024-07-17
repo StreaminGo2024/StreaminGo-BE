@@ -27,7 +27,7 @@ public class Actor {
     @Column(name = "bith_date")
     private Date birth;
 
-    @ManyToOne
+    @ManyToOne //muchos a muchos
     @JoinColumn(name = "casting_id")
     private Casting casting;
 
