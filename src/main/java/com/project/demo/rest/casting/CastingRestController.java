@@ -1,12 +1,16 @@
 package com.project.demo.rest.casting;
 
+import com.project.demo.logic.entity.actor.Actor;
+import com.project.demo.logic.entity.actor.ActorRepository;
 import com.project.demo.logic.entity.casting.Casting;
 import com.project.demo.logic.entity.casting.CastingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/casting")
@@ -14,6 +18,8 @@ public class CastingRestController {
 
     @Autowired
     private CastingRepository CastingRepository;
+    @Autowired
+    private ActorRepository ActorRepository;
 
     @GetMapping
     public List<Casting> getAllCast() {
@@ -30,20 +36,49 @@ public class CastingRestController {
     public Casting getCastById(@PathVariable Long id) {
         return CastingRepository.findById(id).orElseThrow(RuntimeException::new);
     }
-//AGREGAR AUTOR
-    /**@PutMapping("/{id}")
+
+    @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
-    public Cast updateCast(@PathVariable Long id, @RequestBody Cast cast) {
-        return CastRepository.findById(id)
-                .map(existingCast -> {
-                    existingCast.setActores(cast.getActores());
-                    return CastRepository.save(existingCast);
+    public Casting updateCasting(@PathVariable Long id, @RequestBody Casting casting) {
+        return CastingRepository.findById(id)
+                .map(existingCasting -> {
+                    existingCasting.setName(casting.getName());
+                    existingCasting.setActors(casting.getActors());
+                    return CastingRepository.save(existingCasting);
                 })
                 .orElseGet(() -> {
-                    cast.setId(id);
-                    return CastRepository.save(cast);
+                    casting.setId(id);
+                    return CastingRepository.save(casting);
                 });
-    }*/
+    }
+
+    @PutMapping("/{id}/actors")
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
+    public Casting addActorsToCasting(@PathVariable Long id, @RequestBody List<Long> actorIds) {
+        Optional<Casting> optionalCasting = CastingRepository.findById(id);
+
+        if (optionalCasting.isPresent()) {
+            Casting existingCasting = optionalCasting.get();
+            List<Actor> actors = ActorRepository.findAllById(actorIds);
+
+            for (Actor actor : actors) {
+                if (!existingCasting.getActors().contains(actor)) {
+                    existingCasting.getActors().add(actor);
+                    actor.getCastingList().add(existingCasting);
+                }
+            }
+
+            CastingRepository.save(existingCasting);
+            // Clear the association to prevent circular JSON serialization in Spring
+            for (Actor actor : actors) {
+                actor.getCastingList().clear();
+            }
+            return existingCasting;
+
+        } else {
+            throw new RuntimeException("Casting not found with id " + id);
+        }
+    }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")

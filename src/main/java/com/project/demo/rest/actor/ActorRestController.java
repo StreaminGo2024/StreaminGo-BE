@@ -2,11 +2,12 @@ package com.project.demo.rest.actor;
 
 import com.project.demo.logic.entity.actor.Actor;
 import com.project.demo.logic.entity.actor.ActorRepository;
+import com.project.demo.logic.entity.casting.Casting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/actors")
@@ -45,6 +46,7 @@ public class ActorRestController {
                     existingActor.setLastname(actor.getLastname());
                     existingActor.setNationality(actor.getNationality());
                     existingActor.setBirth(actor.getBirth());
+                    existingActor.setCastingList(actor.getCastingList());
                     return ActorRepository.save(existingActor);
                 })
                 .orElseGet(() -> {

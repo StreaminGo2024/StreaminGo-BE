@@ -2,9 +2,12 @@ package com.project.demo.logic.entity.actor;
 
 import com.project.demo.logic.entity.casting.Casting;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "actor")
 @Entity
@@ -27,9 +30,14 @@ public class Actor {
     @Column(name = "bith_date")
     private Date birth;
 
-    @ManyToOne //muchos a muchos
-    @JoinColumn(name = "casting_id")
-    private Casting casting;
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(
+            name = "actor_casting",
+            joinColumns = @JoinColumn(name = "actor_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "casting_id", referencedColumnName = "id")
+    )
+    private List<Casting> casting;
 
     public Long getId() {
         return id;
@@ -71,11 +79,11 @@ public class Actor {
         this.birth = birth;
     }
 
-    public Casting getCast() {
+    public List<Casting> getCastingList() {
         return casting;
     }
 
-    public void setCast(Casting casting) {
+    public void setCastingList(List<Casting> casting) {
         this.casting = casting;
     }
 }

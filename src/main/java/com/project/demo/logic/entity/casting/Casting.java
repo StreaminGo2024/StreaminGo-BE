@@ -2,8 +2,8 @@ package com.project.demo.logic.entity.casting;
 
 import com.project.demo.logic.entity.actor.Actor;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "casting")
@@ -17,9 +17,10 @@ public class Casting {
     @Column(nullable = false)
     private String name;
 
-    //muchos a muchos jsonignore
-    @OneToMany(mappedBy = "casting", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Actor> actors = new ArrayList<>();
+    @JsonIgnore
+    @ManyToMany(mappedBy = "casting")
+
+    private List<Actor> actor;
 // AGREGAR PELICULA ONE TO ONE
     public Long getId() {
         return id;
@@ -30,11 +31,11 @@ public class Casting {
     }
 
     public List<Actor> getActors() {
-        return actors;
+        return actor;
     }
 
     public void setActors(List<Actor> actors) {
-        this.actors = actors;
+        this.actor = actors;
     }
 
     public String getName() {
