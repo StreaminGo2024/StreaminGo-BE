@@ -51,4 +51,8 @@ public class PasswordResetRequest {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public boolean isExpired() {
+        return LocalDateTime.now().isAfter(expirationDate);
+    }
 }

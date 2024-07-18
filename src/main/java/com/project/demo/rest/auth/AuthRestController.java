@@ -99,7 +99,7 @@ public class AuthRestController {
 
         newPasswordResetRequest.setResetCode(null);
 
-        emailHelper.sendEmail("csalazara@ucenfotec.ac.cr","Cambio de contraseña","Para realizar el cambio de su contraseña ingrese al siguiente link: " + url);
+        emailHelper.sendEmail(foundedUser.get().getEmail(),"Cambio de contraseña","Para realizar el cambio de su contraseña ingrese al siguiente link: " + url);
 
         return newPasswordResetRequest;
 
@@ -112,6 +112,10 @@ public class AuthRestController {
 
         if(foundRequest.isEmpty())
             return null;
+
+        if(foundRequest.get().isExpired()){
+            return null;
+        }
 
         return userRepository.findById(foundRequest.get().getUser().getId())
                 .map(existingUser -> {
