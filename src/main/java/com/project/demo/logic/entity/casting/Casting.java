@@ -1,6 +1,7 @@
 package com.project.demo.logic.entity.casting;
 
 import com.project.demo.logic.entity.actor.Actor;
+import com.project.demo.logic.entity.movie.Movie;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -19,9 +20,13 @@ public class Casting {
 
     @JsonIgnore
     @ManyToMany(mappedBy = "casting")
-
     private List<Actor> actor;
-// AGREGAR PELICULA ONE TO ONE
+
+    @OneToOne(mappedBy = "casting", cascade = CascadeType.ALL)
+    private Movie movie;
+
+    private String status;
+
     public Long getId() {
         return id;
     }
@@ -30,19 +35,35 @@ public class Casting {
         this.id = id;
     }
 
-    public List<Actor> getActors() {
-        return actor;
-    }
-
-    public void setActors(List<Actor> actors) {
-        this.actor = actors;
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Actor> getActor() {
+        return actor;
+    }
+
+    public void setActor(List<Actor> actor) {
+        this.actor = actor;
+    }
+
+    public Movie getMovie() {
+        return movie;
+    }
+
+    public void setMovie(Movie movie) {
+        this.movie = movie;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

@@ -39,6 +39,8 @@ public class Actor {
     )
     private List<Casting> casting;
 
+    private String status;
+
     public Long getId() {
         return id;
     }
@@ -79,11 +81,19 @@ public class Actor {
         this.birth = birth;
     }
 
-    public List<Casting> getCastingList() {
+    public List<Casting> getCasting() {
         return casting;
     }
 
-    public void setCastingList(List<Casting> casting) {
+    public void setCasting(List<Casting> casting) {
         this.casting = casting;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

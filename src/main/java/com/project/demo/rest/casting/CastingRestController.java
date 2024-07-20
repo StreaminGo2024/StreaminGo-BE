@@ -43,7 +43,7 @@ public class CastingRestController {
         return CastingRepository.findById(id)
                 .map(existingCasting -> {
                     existingCasting.setName(casting.getName());
-                    existingCasting.setActors(casting.getActors());
+                    existingCasting.setActor(casting.getActor());
                     return CastingRepository.save(existingCasting);
                 })
                 .orElseGet(() -> {
@@ -62,16 +62,16 @@ public class CastingRestController {
             List<Actor> actors = ActorRepository.findAllById(actorIds);
 
             for (Actor actor : actors) {
-                if (!existingCasting.getActors().contains(actor)) {
-                    existingCasting.getActors().add(actor);
-                    actor.getCastingList().add(existingCasting);
+                if (!existingCasting.getActor().contains(actor)) {
+                    existingCasting.getActor().add(actor);
+                    actor.getCasting().add(existingCasting);
                 }
             }
 
             CastingRepository.save(existingCasting);
             // Clear the association to prevent circular JSON serialization in Spring
             for (Actor actor : actors) {
-                actor.getCastingList().clear();
+                actor.getCasting().clear();
             }
             return existingCasting;
 

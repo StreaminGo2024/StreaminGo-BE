@@ -33,10 +33,12 @@ public class Movie {
 
     @Column(nullable = false)
     private Integer duration;
-    /**Relacion pelicula con casting
+
    @OneToOne()
-    @JoinColumn(name = "casting_id", referencedColumnName = "id")
-    private Casting casting;*/
+   @JoinColumn(name = "casting_id", referencedColumnName = "id")
+   private Casting casting;
+
+    private String status;
 
     public Long getId() {
         return id;
@@ -102,11 +104,19 @@ public class Movie {
         this.duration = duration;
     }
 
-    /**public Casting getCast() {
+    public Casting getCasting() {
         return casting;
     }
 
-    public void setCast(Casting casting) {
+    public void setCasting(Casting casting) {
         this.casting = casting;
-    }*/
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

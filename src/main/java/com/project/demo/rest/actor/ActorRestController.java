@@ -46,7 +46,7 @@ public class ActorRestController {
                     existingActor.setLastname(actor.getLastname());
                     existingActor.setNationality(actor.getNationality());
                     existingActor.setBirth(actor.getBirth());
-                    existingActor.setCastingList(actor.getCastingList());
+                    existingActor.setCasting(actor.getCasting());
                     return ActorRepository.save(existingActor);
                 })
                 .orElseGet(() -> {
