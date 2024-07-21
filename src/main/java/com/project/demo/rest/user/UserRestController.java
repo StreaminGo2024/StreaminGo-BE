@@ -91,5 +91,5 @@ public class UserRestController {
             existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
             return UserRepository.save(existingUser);
         });
-        };
+        }
     }
