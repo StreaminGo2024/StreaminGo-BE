@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -69,4 +70,26 @@ public class UserRestController {
         return (User) authentication.getPrincipal();
     }
 
-}
+    @PostMapping("/me")
+    public Optional<User> updateUser(@RequestBody User user) {
+
+        return UserRepository.findById(user.getId())
+                .map(existingUser -> {
+                    existingUser.setName(user.getName());
+                    existingUser.setLastname(user.getLastname());
+                    //.setEmail(user.getEmail());
+                    return UserRepository.save(existingUser);
+                });
+    }
+
+    @PutMapping("/me")
+    public Optional<User> updatePassword(@RequestBody User user){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User profile = (User) authentication.getPrincipal();
+
+        return UserRepository.findById(profile.getId()).map(existingUser -> {
+            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
+            return UserRepository.save(existingUser);
+        });
+        };
+    }
