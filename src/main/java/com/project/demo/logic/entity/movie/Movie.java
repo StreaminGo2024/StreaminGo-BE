@@ -23,7 +23,7 @@ public class Movie {
     @JoinColumn(name = "genre_id", referencedColumnName = "id", nullable = false)
     private Genre genre;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100000)
     private String imageCover;
 
     @Column(nullable = false)
