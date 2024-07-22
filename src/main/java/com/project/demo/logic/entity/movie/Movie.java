@@ -3,6 +3,7 @@ package com.project.demo.logic.entity.movie;
 import com.project.demo.logic.entity.casting.Casting;
 import com.project.demo.logic.entity.genre.Genre;
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Table(name = "movie")
 @Entity
@@ -22,7 +23,7 @@ public class Movie {
     @JoinColumn(name = "genre_id", referencedColumnName = "id", nullable = false)
     private Genre genre;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100000)
     private String imageCover;
 
     @Column(nullable = false)
@@ -34,6 +35,7 @@ public class Movie {
     @Column(nullable = false)
     private Integer duration;
 
+    @JsonIgnore
    @OneToOne()
    @JoinColumn(name = "casting_id", referencedColumnName = "id")
    private Casting casting;

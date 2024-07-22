@@ -22,6 +22,7 @@ public class Casting {
     @ManyToMany(mappedBy = "casting")
     private List<Actor> actor;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "casting", cascade = CascadeType.ALL)
     private Movie movie;
 
