@@ -1,0 +1,10 @@
+package com.project.demo.logic.entity.casting;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+public interface CastingRepository extends JpaRepository<Casting, Long> {
+
+    Optional<Casting> findById(Long id);
+}
