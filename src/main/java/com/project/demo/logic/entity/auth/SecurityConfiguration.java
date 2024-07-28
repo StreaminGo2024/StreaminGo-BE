@@ -32,8 +32,10 @@ public class SecurityConfiguration {
                 .csrf().disable()
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/stream/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/movie-genres/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/casting/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement()
