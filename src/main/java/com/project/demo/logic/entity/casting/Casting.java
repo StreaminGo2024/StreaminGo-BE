@@ -18,7 +18,12 @@ public class Casting {
     @Column(nullable = false)
     private String name;
 
-    @ManyToMany(mappedBy = "casting")
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(
+            name = "actor_casting",
+            joinColumns = @JoinColumn(name = "casting_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "actor_id", referencedColumnName = "id")
+    )
     private List<Actor> actor;
 
     @JsonIgnore

@@ -46,39 +46,38 @@ public class CastingRestController {
                     // Actualizar otros campos del casting
                     existingCasting.setName(casting.getName());
 
-                    // Actualizar la lista de actores
+                    // Limpiar la lista existente de actores
+                    List<Actor> updatedActors = new ArrayList<>();
                     if (casting.getActor() != null) {
-                        // Limpiar la lista existente de actores
-                        existingCasting.getActor().clear();
-
-                        // Agregar los nuevos actores
                         for (Actor actor : casting.getActor()) {
-                            if (!existingCasting.getActor().contains(actor)) {
-                                existingCasting.getActor().add(actor);
+                            // Asegurarse de que los actores sean nuevos o existentes
+                            Actor managedActor = ActorRepository.findById(actor.getId())
+                                    .orElseThrow(() -> new RuntimeException("Actor not found with id " + actor.getId()));
+
+                            // Añadir el actor al casting
+                            if (!existingCasting.getActor().contains(managedActor)) {
+                                updatedActors.add(managedActor);
                                 // Sincronizar la relación bidireccional
-                                if (actor.getCasting() == null) {
-                                    actor.setCasting(new ArrayList<>());
+                                if (managedActor.getCasting() == null) {
+                                    managedActor.setCasting(new ArrayList<>());
                                 }
-                                if (!actor.getCasting().contains(existingCasting)) {
-                                    actor.getCasting().add(existingCasting);
+                                if (!managedActor.getCasting().contains(existingCasting)) {
+                                    managedActor.getCasting().add(existingCasting);
                                 }
                             }
                         }
                     }
 
+                    // Asignar los actores actualizados al casting
+                    existingCasting.setActor(updatedActors);
+
                     // Guardar el casting actualizado
-                    Casting updatedCasting = CastingRepository.save(existingCasting);
-
-                    // Opcional: Actualizar los actores en la base de datos
-                    // ActorRepository.saveAll(existingCasting.getActor());
-
-                    return updatedCasting;
+                    return CastingRepository.save(existingCasting);
                 })
-                .orElseGet(() -> {
-                    casting.setId(id);
-                    return CastingRepository.save(casting);
-                });
+                .orElseThrow(() -> new RuntimeException("Casting not found with id " + id));
     }
+
+
 
 
 
