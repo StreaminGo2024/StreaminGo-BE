@@ -6,5 +6,4 @@ import java.util.Optional;
 
 public interface CastingRepository extends JpaRepository<Casting, Long> {
 
-    Optional<Casting> findById(Long id);
 }

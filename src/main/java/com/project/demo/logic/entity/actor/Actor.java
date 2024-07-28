@@ -38,7 +38,7 @@ public class Actor {
             joinColumns = @JoinColumn(name = "actor_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "casting_id", referencedColumnName = "id")
     )
-    private List<Casting> casting;
+    private List<Casting> casting = new ArrayList<>();
 
     private String status;
 

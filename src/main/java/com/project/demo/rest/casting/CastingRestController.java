@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,15 +43,44 @@ public class CastingRestController {
     public Casting updateCasting(@PathVariable Long id, @RequestBody Casting casting) {
         return CastingRepository.findById(id)
                 .map(existingCasting -> {
+                    // Actualizar otros campos del casting
                     existingCasting.setName(casting.getName());
-                    existingCasting.setActor(casting.getActor());
-                    return CastingRepository.save(existingCasting);
+
+                    // Actualizar la lista de actores
+                    if (casting.getActor() != null) {
+                        // Limpiar la lista existente de actores
+                        existingCasting.getActor().clear();
+
+                        // Agregar los nuevos actores
+                        for (Actor actor : casting.getActor()) {
+                            if (!existingCasting.getActor().contains(actor)) {
+                                existingCasting.getActor().add(actor);
+                                // Sincronizar la relación bidireccional
+                                if (actor.getCasting() == null) {
+                                    actor.setCasting(new ArrayList<>());
+                                }
+                                if (!actor.getCasting().contains(existingCasting)) {
+                                    actor.getCasting().add(existingCasting);
+                                }
+                            }
+                        }
+                    }
+
+                    // Guardar el casting actualizado
+                    Casting updatedCasting = CastingRepository.save(existingCasting);
+
+                    // Opcional: Actualizar los actores en la base de datos
+                    // ActorRepository.saveAll(existingCasting.getActor());
+
+                    return updatedCasting;
                 })
                 .orElseGet(() -> {
                     casting.setId(id);
                     return CastingRepository.save(casting);
                 });
     }
+
+
 
     @PutMapping("/{id}/actors")
     @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
