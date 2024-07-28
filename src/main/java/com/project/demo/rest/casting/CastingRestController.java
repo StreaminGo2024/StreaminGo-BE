@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/casting")
@@ -46,36 +47,55 @@ public class CastingRestController {
                     // Actualizar otros campos del casting
                     existingCasting.setName(casting.getName());
 
-                    // Limpiar la lista existente de actores
-                    List<Actor> updatedActors = new ArrayList<>();
-                    if (casting.getActor() != null) {
-                        for (Actor actor : casting.getActor()) {
-                            // Asegurarse de que los actores sean nuevos o existentes
-                            Actor managedActor = ActorRepository.findById(actor.getId())
-                                    .orElseThrow(() -> new RuntimeException("Actor not found with id " + actor.getId()));
+                    // Obtener los actores actuales del casting
+                    List<Actor> currentActors = new ArrayList<>(existingCasting.getActor());
 
-                            // Añadir el actor al casting
-                            if (!existingCasting.getActor().contains(managedActor)) {
-                                updatedActors.add(managedActor);
+                    if (casting.getActor() != null) {
+                        // Copiar los IDs de los actores en la solicitud
+                        List<Long> newActorIds = casting.getActor().stream()
+                                .map(Actor::getId)
+                                .collect(Collectors.toList());
+
+                        // Filtrar los actores existentes que deben eliminarse
+                        List<Actor> actorsToRemove = currentActors.stream()
+                                .filter(actor -> !newActorIds.contains(actor.getId()))
+                                .collect(Collectors.toList());
+
+                        // Filtrar los actores que deben añadirse
+                        List<Actor> actorsToAdd = casting.getActor().stream()
+                                .map(actor -> ActorRepository.findById(actor.getId())
+                                        .orElseThrow(() -> new RuntimeException("Actor not found with id " + actor.getId())))
+                                .collect(Collectors.toList());
+
+                        // Eliminar actores que no están en la nueva lista
+                        for (Actor actor : actorsToRemove) {
+                            existingCasting.getActor().remove(actor);
+                            actor.getCasting().remove(existingCasting);
+                            ActorRepository.save(actor);
+                        }
+
+                        // Añadir actores que están en la nueva lista
+                        for (Actor actor : actorsToAdd) {
+                            if (!existingCasting.getActor().contains(actor)) {
+                                existingCasting.getActor().add(actor);
                                 // Sincronizar la relación bidireccional
-                                if (managedActor.getCasting() == null) {
-                                    managedActor.setCasting(new ArrayList<>());
+                                if (actor.getCasting() == null) {
+                                    actor.setCasting(new ArrayList<>());
                                 }
-                                if (!managedActor.getCasting().contains(existingCasting)) {
-                                    managedActor.getCasting().add(existingCasting);
+                                if (!actor.getCasting().contains(existingCasting)) {
+                                    actor.getCasting().add(existingCasting);
                                 }
+                                ActorRepository.save(actor);
                             }
                         }
                     }
-
-                    // Asignar los actores actualizados al casting
-                    existingCasting.setActor(updatedActors);
 
                     // Guardar el casting actualizado
                     return CastingRepository.save(existingCasting);
                 })
                 .orElseThrow(() -> new RuntimeException("Casting not found with id " + id));
     }
+
 
 
 
