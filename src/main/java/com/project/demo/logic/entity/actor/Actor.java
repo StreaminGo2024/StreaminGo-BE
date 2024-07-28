@@ -26,7 +26,6 @@ public class Actor {
     @Column(nullable = false)
     private String nationality;
 
-    @UpdateTimestamp
     @Column(name = "bith_date")
     private Date birth;
 
