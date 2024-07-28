@@ -1,5 +1,6 @@
 package com.project.demo.logic.entity.actor;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.demo.logic.entity.casting.Casting;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Table(name = "actor")
 @Entity
+@JsonIgnoreProperties("casting")
 public class Actor {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -18,7 +18,6 @@ public class Casting {
     @Column(nullable = false)
     private String name;
 
-    @JsonIgnore
     @ManyToMany(mappedBy = "casting")
     private List<Actor> actor;
 
