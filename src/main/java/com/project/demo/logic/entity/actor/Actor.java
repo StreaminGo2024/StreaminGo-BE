@@ -1,5 +1,6 @@
 package com.project.demo.logic.entity.actor;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.project.demo.logic.entity.casting.Casting;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Table(name = "actor")
 @Entity
+@JsonIgnoreProperties("casting")
 public class Actor {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -26,7 +28,6 @@ public class Actor {
     @Column(nullable = false)
     private String nationality;
 
-    @UpdateTimestamp
     @Column(name = "bith_date")
     private Date birth;
 
@@ -37,7 +38,7 @@ public class Actor {
             joinColumns = @JoinColumn(name = "actor_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "casting_id", referencedColumnName = "id")
     )
-    private List<Casting> casting;
+    private List<Casting> casting = new ArrayList<>();
 
     private String status;
 

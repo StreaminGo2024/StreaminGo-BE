@@ -18,13 +18,13 @@ public class Casting {
     @Column(nullable = false)
     private String name;
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "casting")
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinTable(
+            name = "actor_casting",
+            joinColumns = @JoinColumn(name = "casting_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "actor_id", referencedColumnName = "id")
+    )
     private List<Actor> actor;
-
-    @JsonIgnore
-    @OneToOne(mappedBy = "casting", cascade = CascadeType.ALL)
-    private Movie movie;
 
     private String status;
 
@@ -50,14 +50,6 @@ public class Casting {
 
     public void setActor(List<Actor> actor) {
         this.actor = actor;
-    }
-
-    public Movie getMovie() {
-        return movie;
-    }
-
-    public void setMovie(Movie movie) {
-        this.movie = movie;
     }
 
     public String getStatus() {
