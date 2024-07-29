@@ -34,9 +34,7 @@ public class Movie {
 
     @Column(nullable = false)
     private Integer duration;
-
-    @JsonIgnore
-   @OneToOne()
+    @ManyToOne(fetch = FetchType.EAGER)
    @JoinColumn(name = "casting_id", referencedColumnName = "id")
    private Casting casting;
 

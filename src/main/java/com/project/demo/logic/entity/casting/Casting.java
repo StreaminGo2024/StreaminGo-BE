@@ -26,10 +26,6 @@ public class Casting {
     )
     private List<Actor> actor;
 
-    @JsonIgnore
-    @OneToOne(mappedBy = "casting", cascade = CascadeType.ALL)
-    private Movie movie;
-
     private String status;
 
     public Long getId() {
@@ -54,14 +50,6 @@ public class Casting {
 
     public void setActor(List<Actor> actor) {
         this.actor = actor;
-    }
-
-    public Movie getMovie() {
-        return movie;
-    }
-
-    public void setMovie(Movie movie) {
-        this.movie = movie;
     }
 
     public String getStatus() {
