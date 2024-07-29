@@ -1,8 +1,12 @@
 package com.project.demo.rest.user;
-
+import com.project.demo.logic.entity.rol.Role;
+import com.project.demo.logic.entity.rol.RoleEnum;
+import com.project.demo.logic.entity.rol.RoleRepository;
 import com.project.demo.logic.entity.user.User;
 import com.project.demo.logic.entity.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -18,17 +23,31 @@ public class UserRestController {
     private UserRepository UserRepository;
 
     @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
     public List<User> getAllUsers() {
-        return UserRepository.findAll();
+        return UserRepository.findAllUsersWithUserRole();
     }
 
     @PostMapping
     public User addUser(@RequestBody User user) {
+        Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
+
+        if (optionalRole.isEmpty()) {
+            return null;
+        }
+
+        var users = new User();
+        user.setName(user.getName());
+        user.setEmail(user.getEmail());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(optionalRole.get());
+
         return UserRepository.save(user);
     }
 
@@ -38,8 +57,12 @@ public class UserRestController {
     }
 
     @GetMapping("/filterByName/{name}")
-    public List<User> getUserById(@PathVariable String name) {
-        return UserRepository.findUsersWithCharacterInName(name);
+    public ResponseEntity<List<User>> getUserByName(@PathVariable String name) {
+        List<User> users = UserRepository.findUsersWithCharacterInName(name);
+        if (users.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
@@ -69,4 +92,26 @@ public class UserRestController {
         return (User) authentication.getPrincipal();
     }
 
-}
+    @PostMapping("/me")
+    public Optional<User> updateUser(@RequestBody User user) {
+
+        return UserRepository.findById(user.getId())
+                .map(existingUser -> {
+                    existingUser.setName(user.getName());
+                    existingUser.setLastname(user.getLastname());
+                    //.setEmail(user.getEmail());
+                    return UserRepository.save(existingUser);
+                });
+    }
+
+    @PutMapping("/me")
+    public Optional<User> updatePassword(@RequestBody User user){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User profile = (User) authentication.getPrincipal();
+
+        return UserRepository.findById(profile.getId()).map(existingUser -> {
+            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
+            return UserRepository.save(existingUser);
+        });
+        }
+    }

@@ -34,10 +34,12 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/stream/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/stream/**").permitAll()
-                        //.requestMatchers(HttpMethod.POST, "/chats/**").permitAll()
-                        //.requestMatchers(HttpMethod.GET, "/chats/**").permitAll()
-                        //.requestMatchers(HttpMethod.POST, "/messages/**").permitAll()
-                        //.requestMatchers(HttpMethod.GET, "/messages/**").permitAll()
+
+                        .requestMatchers("/stream/subtitles").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/movie-genres/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/casting/**").permitAll()
+
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement()
