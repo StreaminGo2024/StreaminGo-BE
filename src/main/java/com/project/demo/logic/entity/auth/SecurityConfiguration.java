@@ -32,7 +32,12 @@ public class SecurityConfiguration {
                 .csrf().disable()
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/stream/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/stream/**").permitAll()
+                        //.requestMatchers(HttpMethod.POST, "/chats/**").permitAll()
+                        //.requestMatchers(HttpMethod.GET, "/chats/**").permitAll()
+                        //.requestMatchers(HttpMethod.POST, "/messages/**").permitAll()
+                        //.requestMatchers(HttpMethod.GET, "/messages/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement()
