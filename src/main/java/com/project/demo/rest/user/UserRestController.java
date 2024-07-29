@@ -14,7 +14,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -113,5 +115,34 @@ public class UserRestController {
             existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
             return UserRepository.save(existingUser);
         });
-        }
     }
+
+    @GetMapping("/count-by-month")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPER_ADMIN')")
+    public ResponseEntity<List<Map<String, Object>>> getUserCountByMonth() {
+        List<Object[]> results = UserRepository.countUsersByMonth();
+        
+        // Convert the results to a List of Maps
+        List<Map<String, Object>> userCounts = results.stream()
+                .map(record -> {
+                    if (record.length >= 3) {  // Ensure the array has at least 3 elements
+                        return Map.of(
+                                "year", record[0],
+                                "month", record[1],
+                                "count", record[2]
+                        );
+                    } else {
+                        return Map.of(
+                                "year", null,
+                                "month", null,
+                                "count", null
+                        );
+                    }
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(userCounts);
+    }
+}
+
+

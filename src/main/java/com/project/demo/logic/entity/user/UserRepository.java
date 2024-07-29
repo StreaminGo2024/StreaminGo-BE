@@ -17,4 +17,9 @@ public interface UserRepository extends JpaRepository<User, Long>  {
     Optional<User> findByName(String name);
 
     Optional<User> findByEmail(String email);
+
+    @Query("SELECT YEAR(u.createdAt), MONTH(u.createdAt), COUNT(u) " +
+            "FROM User u GROUP BY YEAR(u.createdAt), MONTH(u.createdAt) " +
+            "ORDER BY YEAR(u.createdAt), MONTH(u.createdAt)")
+    List<Object[]> countUsersByMonth();
 }
