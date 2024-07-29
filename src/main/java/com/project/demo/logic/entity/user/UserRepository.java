@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long>  {
-    @Query("SELECT u FROM User u WHERE LOWER(u.name) LIKE %?1%")
+    @Query("SELECT u FROM User u WHERE LOWER(u.name) LIKE %?1% AND u.role.name = 'USER'")
     List<User> findUsersWithCharacterInName(String character);
 
     @Query("SELECT u FROM User u WHERE u.role.name = 'USER'")
