@@ -56,7 +56,9 @@ public class VideoControlHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        super.afterConnectionClosed(session, status);
         sessions.remove(session);
+        System.out.println("Session closed: " + session.getId());
     }
 
     // Clase auxiliar para crear mensajes JSON
