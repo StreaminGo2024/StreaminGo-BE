@@ -39,7 +39,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.DELETE, "/movie-genres/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/casting/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/count-by-month/**").permitAll()
-
+                        .requestMatchers("/ws/**").permitAll()
 
                         .anyRequest().authenticated()
                 )
