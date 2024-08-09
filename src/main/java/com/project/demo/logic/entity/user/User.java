@@ -1,4 +1,5 @@
 package com.project.demo.logic.entity.user;
+import com.project.demo.logic.entity.passwordResetRequests.PasswordResetRequest;
 import com.project.demo.logic.entity.rol.Role;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -10,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Table(name = "user")
 @Entity
@@ -42,6 +44,10 @@ public class User implements UserDetails {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     private Role role;
+
+    //RELACION CON PASSWORD REQUEST
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<PasswordResetRequest> passwordRequest;
 
     // Constructors
     public User() {}

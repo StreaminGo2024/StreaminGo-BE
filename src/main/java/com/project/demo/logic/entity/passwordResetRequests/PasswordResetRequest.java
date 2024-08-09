@@ -16,6 +16,7 @@ public class PasswordResetRequest {
     private LocalDateTime expirationDate;
     @Column(nullable = false)
     private String resetCode;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, referencedColumnName="id")
     private User user;
