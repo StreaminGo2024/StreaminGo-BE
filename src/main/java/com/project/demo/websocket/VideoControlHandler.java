@@ -25,18 +25,22 @@ public class VideoControlHandler extends TextWebSocketHandler {
 
     @Override
     public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
-        // Leer el mensaje y determinar el tipo
-        String payload = message.getPayload();
-        Map<String, Object> msg = objectMapper.readValue(payload, Map.class);
+        try {
+            String payload = message.getPayload();
+            Map<String, Object> msg = objectMapper.readValue(payload, Map.class);
 
-        String type = (String) msg.get("type");
-        if ("videoControl".equals(type)) {
-            currentStatus = (String) msg.get("status"); // Obtener el comando de control
-            broadcastMessage(new VideoControlMessage("videoControl", currentStatus));
-        } else if ("chat".equals(type)) {
-            broadcastMessage(msg); // Enviar mensajes de chat a todos los clientes
-        } else if ("reaction".equals(type)) {
-            broadcastMessage(msg); // Enviar reacciones a todos los clientes
+            String type = (String) msg.get("type");
+            if ("videoControl".equals(type)) {
+                currentStatus = (String) msg.get("status");
+                System.out.println("Received video control command: " + currentStatus);
+                broadcastMessage(new VideoControlMessage("videoControl", currentStatus));
+            } else if ("chat".equals(type)) {
+                broadcastMessage(msg);
+            } else if ("reaction".equals(type)) {
+                broadcastMessage(msg);
+            }
+        } catch (Exception e) {
+            System.err.println("Error handling text message: " + e.getMessage());
         }
     }
 
