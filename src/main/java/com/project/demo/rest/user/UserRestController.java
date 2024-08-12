@@ -1,4 +1,6 @@
 package com.project.demo.rest.user;
+import com.project.demo.logic.entity.passwordResetRequests.PasswordResetRequest;
+import com.project.demo.logic.entity.passwordResetRequests.PasswordResetRequestRepository;
 import com.project.demo.logic.entity.rol.Role;
 import com.project.demo.logic.entity.rol.RoleEnum;
 import com.project.demo.logic.entity.rol.RoleRepository;
@@ -26,6 +28,9 @@ public class UserRestController {
 
     @Autowired
     private RoleRepository roleRepository;
+
+    @Autowired
+    private PasswordResetRequestRepository passwordResetRequestRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -84,6 +89,18 @@ public class UserRestController {
 
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
+        // Encontrar el usuario por ID
+        User user = UserRepository.findById(id).orElse(null);
+
+        // Obtener las solicitudes de restablecimiento de contraseña para el usuario
+        List<PasswordResetRequest> resetRequests = passwordResetRequestRepository.findByUserId(id);
+
+        // Eliminar las solicitudes de restablecimiento de contraseña
+        for (PasswordResetRequest request : resetRequests) {
+            passwordResetRequestRepository.delete(request);
+        }
+
+        // Eliminar el usuario
         UserRepository.deleteById(id);
     }
 
