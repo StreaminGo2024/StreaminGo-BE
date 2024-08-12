@@ -33,7 +33,7 @@ public class CastingRestController {
     public Casting addCast(@RequestBody Casting casting) {
         return CastingRepository.save(casting);
     }
-
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public Casting getCastById(@PathVariable Long id) {
         return CastingRepository.findById(id).orElseThrow(RuntimeException::new);

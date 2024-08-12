@@ -40,7 +40,7 @@ public class UserRestController {
     public List<User> getAllUsers() {
         return UserRepository.findAllUsersWithUserRole();
     }
-
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     @PostMapping
     public User addUser(@RequestBody User user) {
         Optional<Role> optionalRole = roleRepository.findByName(RoleEnum.USER);
@@ -57,12 +57,12 @@ public class UserRestController {
 
         return UserRepository.save(user);
     }
-
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
         return UserRepository.findById(id).orElseThrow(RuntimeException::new);
     }
-
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     @GetMapping("/filterByName/{name}")
     public ResponseEntity<List<User>> getUserByName(@PathVariable String name) {
         List<User> users = UserRepository.findUsersWithCharacterInName(name);
@@ -71,7 +71,7 @@ public class UserRestController {
         }
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     @PutMapping("/{id}")
     public User updateUser(@PathVariable Long id, @RequestBody User user) {
         return UserRepository.findById(id)
@@ -86,7 +86,7 @@ public class UserRestController {
                     return UserRepository.save(user);
                 });
     }
-
+    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
         // Encontrar el usuario por ID
@@ -110,7 +110,7 @@ public class UserRestController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (User) authentication.getPrincipal();
     }
-
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/me")
     public Optional<User> updateUser(@RequestBody User user) {
 
@@ -118,11 +118,10 @@ public class UserRestController {
                 .map(existingUser -> {
                     existingUser.setName(user.getName());
                     existingUser.setLastname(user.getLastname());
-                    //.setEmail(user.getEmail());
                     return UserRepository.save(existingUser);
                 });
     }
-
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/me")
     public Optional<User> updatePassword(@RequestBody User user){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

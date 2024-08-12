@@ -33,7 +33,7 @@ public class SessionController {
 
         return sessionRespository.save(newSession);
     }
-
+    @PreAuthorize("hasAnyRole('SUPER_ADMIN')")
     @DeleteMapping("/{id}")
     public void deleteSession(@PathVariable Long id){
         sessionRespository.deleteById(id);

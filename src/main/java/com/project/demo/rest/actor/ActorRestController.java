@@ -28,10 +28,11 @@ public class ActorRestController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("isAuthenticated()")
     public Actor getActorById(@PathVariable Long id) {
         return ActorRepository.findById(id).orElseThrow(RuntimeException::new);
     }
-
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/filterByName/{name}")
     public List<Actor> getActorById(@PathVariable String name) {
         return ActorRepository.findActorsWithCharacterInName(name);

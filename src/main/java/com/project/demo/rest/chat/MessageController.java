@@ -21,16 +21,6 @@ public class MessageController {
     @Autowired
     private ChatService chatService;
 
-    /*@GetMapping("/chat/{chatId}")
-    public ResponseEntity<List<Message>> getMessagesByChatId(@PathVariable Long chatId) {
-        Chat chat = chatService.findById(chatId);
-        if (chat == null) {
-            return ResponseEntity.notFound().build();
-        }
-        List<Message> messages = messageService.findByChat(chat);
-        return ResponseEntity.ok(messages);
-    }*/
-
     @PostMapping
     public ResponseEntity<Message> createMessage(@RequestBody Message message) {
         Message savedMessage = messageService.save(message);

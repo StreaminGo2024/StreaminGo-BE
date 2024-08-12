@@ -13,7 +13,7 @@ public class GenreRestController {
 
     @Autowired
     private GenreRepository GenreRepository;
-
+    @PreAuthorize("isAuthenticated()")
     @GetMapping
     public List<Genre> getAllGenres() {
         return GenreRepository.findAll();
@@ -24,12 +24,12 @@ public class GenreRestController {
     public Genre addGenre(@RequestBody Genre genre) {
         return GenreRepository.save(genre);
     }
-
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public Genre getGenreById(@PathVariable Long id) {
         return GenreRepository.findById(id).orElseThrow(RuntimeException::new);
     }
-
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/filterByName/{name}")
     public List<Genre> getGenreById(@PathVariable String name) {
         return GenreRepository.findGenreWithCharacterInName(name);

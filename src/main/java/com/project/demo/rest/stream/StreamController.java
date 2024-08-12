@@ -15,12 +15,12 @@ public class StreamController {
 
     @Autowired
     private StreamService streamService;
-
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "video", produces = "video/mp4")
     public Mono<Resource> streamContent(@RequestParam String title) {
         return streamService.retrieveContent(title);
     }
-
+    @PreAuthorize("isAuthenticated()")
     @PostMapping(value = "subtitles", produces = "text/vtt")
     public Mono<Resource> streamSubtitles(@RequestBody SubtitleRequest subtitleRequest) {
         return streamService.retrieveSubtitles(subtitleRequest.getTitle(), subtitleRequest.getLang());

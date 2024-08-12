@@ -4,6 +4,7 @@ import com.project.demo.logic.entity.chat.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 public class ChatController {
     @Autowired
     private ChatService chatService;
-
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{chatId}")
     public ResponseEntity<Map<String, Object>> getChatById(@PathVariable Long chatId) {
         Chat chat = chatService.findById(chatId);
@@ -30,7 +31,7 @@ public class ChatController {
         response.put("messages", messagesContent);
         return ResponseEntity.ok(response);
     }
-
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<Chat> createChat(@RequestBody Chat chat) {
         Chat savedChat = chatService.save(chat);

@@ -24,16 +24,17 @@ public class MovieRestController {
     public Movie addMovie(@RequestBody Movie movie) {
         return MovieRepository.save(movie);
     }
-
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
     public Movie getMovieById(@PathVariable Long id) {
         return MovieRepository.findById(id).orElseThrow(RuntimeException::new);
     }
-
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/filterByName/{name}")
     public List<Movie> getMovieById(@PathVariable String name) {
         return MovieRepository.findMoviesWithCharacterInName(name);
     }
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/filterByGenre/{genre}")
     public List<Movie> getMovieByGenre(@PathVariable String genre) {
         return MovieRepository.findMoviesByGenre(genre);
